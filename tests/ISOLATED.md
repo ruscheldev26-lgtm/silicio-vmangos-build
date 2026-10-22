@@ -1,0 +1,14 @@
+# SilicioAI v1 — teste do personagem persistente
+
+Esta IA é opt-in. Não cria personagens, concede níveis, aprende feitiços, gera itens ou teleporta. Requer um Silicio criado normalmente como gnomo mago. Combate inicial: lobos 705, Fireball conhecida, aproximação, corpo a corpo e repouso natural. Sem missões, saque, treinador ou recuperação de cadáver automatizados nesta versão.
+
+1. Execute scripts/prepare-isolated.py com o ZIP verificado, SHA-256, run ID e commit de controle. Escolha uma pasta nova fora da instalação original. O script somente prepara arquivos; não inicia processos.
+2. Use uma instância MySQL descartável em 127.0.0.1:3308. Crie somente silicio_test_realmd, silicio_test_world, silicio_test_characters e silicio_test_logs, a partir dos esquemas públicos compatíveis. O usuário silicio_test deve ter permissões somente nesses quatro bancos. Defina uma senha local e substitua CHANGE_ME nos dois configs; não envie esses configs ao GitHub.
+3. Coloque mapas/DBC/vmaps/mmaps compatíveis na subpasta data desta instalação de teste, sem modificar a instalação original. Configure o realm descartável para 127.0.0.1:18085. Realmd de teste usa 13724, mangosd 18085, ambos em loopback; RA, SOAP e bots aleatórios desligados.
+4. Neste Celeron, não rode outro mangosd simultaneamente. Inicie um teste de mundo somente quando houver RAM suficiente e o servidor original já estiver parado por decisão do titular. Não pare o servidor original com estes scripts.
+5. Entre com o cliente 4449 no realm de teste e crie Silicio como gnomo mago nível 1. Saia da conta. Execute tests/register-isolated.sql somente em silicio_test_characters. A rotina recusa outro banco, personagem diferente, nível/XP alterados e registro prévio.
+6. Reinicie apenas o mangosd descartável para carregar o registro. No console desse servidor: bot add Silicio. Confirme no log [SilicioAI v1] login ... ready=1 build=4449. Observe no cliente de teste: nascimento normal, movimentação por caminho, Fireball consumindo mana, lobos morrendo e XP concedida pelo núcleo. Verifique XP antes/depois, sem comandos de nível. Se não houver lobos no raio de 60m, faça a observação na área inicial sem teleportar o personagem.
+7. Encerre o teste com bot delete Silicio no console descartável; PlayerBot.AllowSaving=1 permite o salvamento normal. Reinicie o teste e verifique XP e posição persistidos. Morte exige recuperação normal nesta versão.
+8. Reversão: encerre somente os processos de teste e arquive a pasta descartável. Nenhuma substituição de executáveis, configuração ou SQL do servidor original faz parte desta entrega.
+
+Critérios: login correto, movimento sem teleporte, casts válidos, consumo de mana, recuperação natural, XP por combate, persistência no relog. Compilação e --version não provam esses comportamentos no mundo: registre a observação real separadamente.
