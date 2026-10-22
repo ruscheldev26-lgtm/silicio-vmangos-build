@@ -38,6 +38,11 @@ public:
                  me->GetGUIDLow(), me->GetLevel(), uint32(m_ready));
     }
 
+    void MovementInform(uint32 type, uint32 id) override
+    {
+        if (type == POINT_MOTION_TYPE && id == 4448) m_roaming = false;
+    }
+
     void UpdateAI(uint32 diff) override
     {
         if (!me) return;
@@ -59,12 +64,13 @@ public:
             if (me->GetHealthPercent() < 85 || me->GetPowerPercent(POWER_MANA) < 80)
             {
                 me->GetMotionMaster()->MoveIdle();
+                me->StopMoving();
                 m_roaming = false;
                 return; // normal server regeneration only
             }
             if (me->GetDistance(m_homeX, m_homeY, m_homeZ) > 160.0f)
             {
-                if (!m_returning) me->GetMotionMaster()->MovePoint(4449, m_homeX, m_homeY, m_homeZ);
+                if (!m_returning) me->GetMotionMaster()->MovePoint(4449, m_homeX, m_homeY, m_homeZ, MOVE_PATHFINDING | MOVE_WALK_MODE);
                 m_returning = true; m_roaming = false;
                 return;
             }
@@ -80,8 +86,15 @@ public:
             }
             if (!victim)
             {
-                if (!m_roaming) me->GetMotionMaster()->MoveRandom(true, 35.0f);
-                m_roaming = true;
+                if (!m_roaming)
+                {
+                    float x, y, z;
+                    if (me->GetRandomPoint(m_homeX, m_homeY, m_homeZ, 35.0f, x, y, z))
+                    {
+                        me->GetMotionMaster()->MovePoint(4448, x, y, z, MOVE_PATHFINDING | MOVE_WALK_MODE);
+                        m_roaming = true;
+                    }
+                }
                 return;
             }
             if (!me->Attack(victim, true)) return;
@@ -100,7 +113,8 @@ public:
             m_timer = 1500;
             return;
         }
-        me->GetMotionMaster()->MoveChase(victim);
+        if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE)
+            me->GetMotionMaster()->MoveChase(victim);
         if (me->CanReachWithMeleeAutoAttack(victim) && me->IsAttackReady())
         {
             me->AttackerStateUpdate(victim);
