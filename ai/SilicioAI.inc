@@ -7,6 +7,12 @@
 class SilicioAI final : public PlayerBotAI
 {
 public:
+    void OnBotEntryLoad(PlayerBotEntry* entry) override
+    {
+        // Persistent progress must remain attached to the character's real account.
+        // The generic population framework otherwise assigns a synthetic account ID.
+        entry->accountId = sObjectMgr.GetPlayerAccountIdByGUID(entry->playerGUID);
+    }
     bool OnSessionLoaded(PlayerBotEntry* entry, WorldSession* session) override
     {
         if (!sConfig.GetBoolDefault("Silicio.Enable", false))
