@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+*.conf
+*.sql
+*.log
+*.dmp
+*.pdb
+*.exe
+*.dll
+/source/
+/payload/
+/build*/
