@@ -9,7 +9,7 @@ def val(text,key):
     if len(m)!=1:raise ValueError('Ambiguous/missing key '+key)
     return m[0].strip('"')
 errors=[]
-for text,key,expected in [(world,'BindIP','127.0.0.1'),(realm,'BindIP','127.0.0.1'),(world,'WorldServerPort','18085'),(realm,'RealmServerPort','13724'),(world,'Ra.Enable','0'),(world,'SOAP.Enabled','0'),(world,'RandomBot.Enable','0')]:
+for text,key,expected in [(world,'BindIP','127.0.0.1'),(realm,'BindIP','127.0.0.1'),(world,'WorldServerPort','18085'),(realm,'RealmServerPort','13724'),(world,'Ra.Enable','0'),(world,'SOAP.Enabled','0'),(world,'RandomBot.Enable','0'),(world,'Silicio.Enable','1'),(world,'PlayerBot.AllowSaving','1')]:
     if val(text,key)!=expected:errors.append('Unsafe '+key)
 for key,suffix in [('LoginDatabase.Info','realmd'),('WorldDatabase.Info','world'),('CharacterDatabase.Info','characters'),('LogsDatabase.Info','logs')]:
     parts=val(world,key).split(';')
